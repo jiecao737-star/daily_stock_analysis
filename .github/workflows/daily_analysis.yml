@@ -64,14 +64,18 @@ jobs:
           # 💡 设置备用模型列表，Gemini 限制时自动切换
           LITELLM_FALLBACK_MODELS: 'openai/gpt-4o-mini,openai/gemini-1.5-flash'
           
-          # Gemini 配置
+          ## Gemini 配置
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_REQUEST_DELAY: '15.0'  # 💡 增加延迟，防止频率限制
+          GEMINI_REQUEST_DELAY: '15.0'
           
-          # AIHubMix 配置 (作为 OpenAI 兼容渠道)
+          # AIHubMix 配置 - 确保这两行同时存在且名字准确
           AIHUBMIX_KEY: ${{ secrets.AIHUBMIX_KEY }}
-          OPENAI_API_KEY: ${{ secrets.AIHUBMIX_KEY }}
+          OPENAI_API_KEY: ${{ secrets.AIHUBMIX_KEY }} 
           OPENAI_BASE_URL: 'https://api.aihubmix.com/v1'
+
+          # 降级模型配置
+          LITELLM_MODEL: 'gemini/gemini-1.5-flash'
+          LITELLM_FALLBACK_MODELS: 'openai/gpt-4o-mini'
 
           # ==========================================
           # 数据源与搜索
