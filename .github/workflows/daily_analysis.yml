@@ -60,22 +60,27 @@ jobs:
           # AI 配置 (核心优化部分)
           # ==========================================
           # 设置主模型
+         env:
+          # === 核心模型配置 ===
           LITELLM_MODEL: 'gemini/gemini-1.5-flash'
-          # 💡 设置备用模型列表，Gemini 限制时自动切换
-          LITELLM_FALLBACK_MODELS: 'openai/gpt-4o-mini,openai/gemini-1.5-flash'
+          # 💡 这里多放几个备选，确保万无一失
+          LITELLM_FALLBACK_MODELS: 'openai/gpt-4o-mini,openai/deepseek-chat,gemini/gemini-1.5-flash'
           
-          ## Gemini 配置
+          # === Gemini 主力配置 ===
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_REQUEST_DELAY: '15.0'
+          GEMINI_REQUEST_DELAY: '20.0'  # 💡 增加到20秒，彻底避开免费版频率限制
           
-          # AIHubMix 配置 - 确保这两行同时存在且名字准确
+          # === AIHubMix 备选配置 ===
           AIHUBMIX_KEY: ${{ secrets.AIHUBMIX_KEY }}
-          OPENAI_API_KEY: ${{ secrets.AIHUBMIX_KEY }} 
+          OPENAI_API_KEY: ${{ secrets.AIHUBMIX_KEY }} # 💡 某些插件需要这个变量名
           OPENAI_BASE_URL: 'https://api.aihubmix.com/v1'
-
-          # 降级模型配置
-          LITELLM_MODEL: 'gemini/gemini-1.5-flash'
-          LITELLM_FALLBACK_MODELS: 'openai/gpt-4o-mini'
+          
+          # === 报告深度配置 ===
+          # 💡 必须设置为 full 才能看到“风险警报”和“利好催化”
+          REPORT_TYPE: 'full' 
+          # 💡 开启搜索功能，否则 AI 没法写“重要信息速览”
+          TAVILY_API_KEYS: ${{ secrets.TAVILY_API_KEYS }}
+          BOCHA_API_KEYS: ${{ secrets.BOCHA_API_KEYS }}
 
           # ==========================================
           # 数据源与搜索
