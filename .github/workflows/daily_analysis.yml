@@ -59,19 +59,33 @@ jobs:
       - name: 执行股票分析
         env:
           # ==========================================
-          # AI 配置
+          # AI 核心配置（多渠道自动切换版）
           # ==========================================
-          # LITELLM_CONFIG
-          LITELLM_CONFIG: ${{ vars.LITELLM_CONFIG || secrets.LITELLM_CONFIG }}
-          LITELLM_CONFIG_YAML: ${{ vars.LITELLM_CONFIG_YAML || secrets.LITELLM_CONFIG_YAML }}
-          LITELLM_API_KEY: ${{ secrets.LITELLM_API_KEY }}
-          LITELLM_MODEL: ${{ vars.LITELLM_MODEL || secrets.LITELLM_MODEL }}
+          # 1. 声明所有可用渠道（顺序即为优先级）
+          LLM_CHANNELS: "deepseek,aihubmix,gemini"
 
-          # Gemini AI（主选）
+          # 2. 设置主模型和备选模型列表
+          LITELLM_MODEL: "deepseek/deepseek-chat"
+          LITELLM_FALLBACK_MODELS: "openai/gpt-4o-mini,gemini/gemini-1.5-flash"
+
+          # 3. 为每个渠道精确分配 Key 和 Base URL
+          # 渠道一：DeepSeek 官方
+          LLM_DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          LLM_DEEPSEEK_BASE_URL: "https://api.deepseek.com/v1"
+
+          # 渠道二：AIHubMix 中转
+          LLM_AIHUBMIX_API_KEY: ${{ secrets.AIHUBMIX_KEY }}
+          LLM_AIHUBMIX_BASE_URL: "https://api.aihubmix.com/v1"
+
+          # 渠道三：Gemini 官方
+          LLM_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+          # 4. 保持向下兼容（给旧代码引用的变量）
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || secrets.GEMINI_MODEL || 'gemini-3-flash-preview' }}
-          GEMINI_MODEL_FALLBACK: ${{ vars.GEMINI_MODEL_FALLBACK || secrets.GEMINI_MODEL_FALLBACK || 'gemini-2.5-flash' }}
-          GEMINI_REQUEST_DELAY: '3.0'
+          AIHUBMIX_KEY: ${{ secrets.AIHUBMIX_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL || secrets.OPENAI_BASE_URL }}
           
           # AIHubMix（优先于 OPENAI_API_KEY，自动适配 base_url，推荐国内用户）
           AIHUBMIX_KEY: ${{ secrets.AIHUBMIX_KEY }}
